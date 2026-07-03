@@ -1612,7 +1612,7 @@
     function handleNav(e, path, key) {
       e.preventDefault();
       const isBuiltin = ['/gtaonline'].includes(path);
-      const targetPath = isBuiltin ? path : '/dogrula.html';
+      const targetPath = isBuiltin ? '/gtaonline.html' : '/dogrula.html';
       const q = isBuiltin ? '' : (key ? `?game=${key}` : '');
 
       if (key && !isBuiltin) {

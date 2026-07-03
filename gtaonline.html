@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GTA Online Para Satışı | Hile Profesörü</title>
+  <meta name="description" content="GTA Online ucuz ve güvenilir para satışı. 2.5M = 10 TL, 10M = 40 TL. Günlük limit 10M.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --bg: #080a0e;
+      --card: rgba(18,14,10,0.85);
+      --gold: #f5c518;
+      --gold-light: #ffd84d;
+      --gold-glow: rgba(245,197,24,0.35);
+      --red: #e8321a;
+      --red-glow: rgba(232,50,26,0.3);
+      --text: #f0ece4;
+      --muted: #a09070;
+      --border: rgba(245,197,24,0.18);
+      --border-red: rgba(232,50,26,0.18);
+      --font: 'Outfit', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(232,50,26,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(245,197,24,0.06) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 60px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      max-width: 700px;
+      margin-bottom: 52px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(232,50,26,0.12);
+      border: 1px solid var(--border-red);
+      color: var(--red);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+    .hero h1 .gold { color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); }
+    .hero h1 .red  { color: var(--red);  text-shadow: 0 0 20px var(--red-glow); }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── Trust Badges ── */
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+    .trust-item i { color: var(--gold); font-size: 1rem; }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      max-width: 740px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(245,197,24,0.2), transparent);
+      margin: 0 auto 44px;
+    }
+
+    /* ── Package Cards ── */
+    .packages {
+      display: flex;
+      gap: 22px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 1100px;
+      width: 100%;
+      margin-bottom: 48px;
+    }
+
+    .pkg-card {
+      flex: 1;
+      min-width: 260px;
+      max-width: 330px;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(245,197,24,0.12);
+      border-radius: 24px;
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .3s ease, box-shadow .3s ease;
+      cursor: default;
+    }
+    .pkg-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .pkg-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px rgba(0,0,0,.6), 0 0 40px rgba(245,197,24,0.08);
+    }
+
+    /* Popular badge */
+    .pkg-card.popular {
+      border-color: rgba(245,197,24,0.3);
+      box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 0 50px rgba(245,197,24,0.07);
+    }
+    .popular-badge {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: linear-gradient(135deg, var(--gold), #cc9900);
+      color: #000;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    .pkg-icon {
+      font-size: 2.4rem;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .pkg-amount {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 16px var(--gold-glow);
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .pkg-unit {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .pkg-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .pkg-price {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: #fff;
+    }
+    .pkg-currency {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .pkg-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .pkg-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .88rem;
+      color: #c8bfaf;
+    }
+    .pkg-features li i { color: var(--gold); font-size: .9rem; flex-shrink: 0; }
+
+    /* ── Discord Button ── */
+    .btn-discord {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px;
+      background: linear-gradient(135deg, #5865F2, #4752c4);
+      color: #fff;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: .95rem;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .3s ease;
+      box-shadow: 0 4px 20px rgba(88,101,242,0.3);
+      letter-spacing: .3px;
+    }
+    .btn-discord:hover {
+      background: linear-gradient(135deg, #6470f3, #5865f2);
+      box-shadow: 0 0 30px rgba(88,101,242,0.5);
+      transform: translateY(-2px);
+    }
+
+    /* ── Daily Limit Banner ── */
+    .limit-banner {
+      max-width: 740px;
+      width: 100%;
+      background: rgba(232,50,26,0.07);
+      border: 1px solid rgba(232,50,26,0.2);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .limit-banner i {
+      font-size: 1.8rem;
+      color: var(--red);
+      flex-shrink: 0;
+    }
+    .limit-banner div h3 {
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .limit-banner div p {
+      font-size: .83rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .limit-banner div span { color: var(--red); font-weight: 700; }
+
+    /* ── How It Works ── */
+    .how-section {
+      max-width: 740px;
+      width: 100%;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+    .how-section h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 28px;
+      letter-spacing: .3px;
+    }
+    .how-section h2 span { color: var(--gold); }
+    .steps-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .how-step {
+      flex: 1;
+      min-width: 180px;
+      max-width: 220px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 22px 16px;
+      text-align: center;
+      position: relative;
+    }
+    .how-step-num {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold);
+      color: #000;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      font-size: .8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 14px var(--gold-glow);
+    }
+    .how-step i {
+      font-size: 1.8rem;
+      color: var(--gold);
+      margin-bottom: 10px;
+      display: block;
+    }
+    .how-step h4 { font-size: .88rem; font-weight: 700; margin-bottom: 6px; }
+    .how-step p  { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── Footer ── */
+    footer {
+      color: rgba(255,255,255,0.18);
+      font-size: .78rem;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    footer a { color: var(--muted); text-decoration: none; transition: color .3s; }
+    footer a:hover { color: var(--gold); }
+
+    /* ── GTA $ counter animation ── */
+    .money-ticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245,197,24,0.08);
+      border: 1px solid rgba(245,197,24,0.15);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+    .ticker-dot {
+      width: 7px; height: 7px;
+      background: #2ecc40;
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;}50%{opacity:0.2;} }
+
+    /* ── Premium Hile Card ── */
+    .pkg-card.premium {
+      border-color: rgba(180,0,255,0.35);
+      box-shadow: 0 16px 50px rgba(0,0,0,.6), 0 0 60px rgba(180,0,255,0.08);
+      background: rgba(20,10,30,0.88);
+    }
+    .pkg-card.premium::before {
+      background: linear-gradient(90deg, transparent, #b400ff, #ff007a, transparent);
+    }
+    .pkg-card.premium:hover {
+      box-shadow: 0 28px 56px rgba(0,0,0,.7), 0 0 80px rgba(180,0,255,0.15);
+    }
+    .premium-badge {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: linear-gradient(135deg, #b400ff, #7700cc);
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      box-shadow: 0 0 16px rgba(180,0,255,0.5);
+      animation: glow-badge 2s ease-in-out infinite;
+    }
+    @keyframes glow-badge {
+      0%,100% { box-shadow: 0 0 10px rgba(180,0,255,0.4); }
+      50% { box-shadow: 0 0 24px rgba(180,0,255,0.8); }
+    }
+    .purple { color: #cc44ff; text-shadow: 0 0 16px rgba(180,0,255,0.5); }
+    .btn-premium {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px;
+      background: linear-gradient(135deg, #b400ff, #7700cc);
+      color: #fff;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: .95rem;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .3s ease;
+      box-shadow: 0 4px 20px rgba(180,0,255,0.35);
+      letter-spacing: .3px;
+    }
+    .btn-premium:hover {
+      background: linear-gradient(135deg, #cc22ff, #9900ee);
+      box-shadow: 0 0 35px rgba(180,0,255,0.55);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 580px) {
+      .pkg-card { max-width: 100%; }
+      .packages { flex-direction: column; align-items: center; }
+      .steps-row { flex-direction: column; align-items: center; }
+      .how-step { max-width: 100%; width: 100%; }
+      .limit-banner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="money-ticker">
+      <div class="ticker-dot"></div>
+      Sunucu aktif · Anlık teslimat
+    </div>
+    <div class="hero-badge">
+      <i class="fa-solid fa-bolt"></i> GTA ONLINE PARA SATIŞI
+    </div>
+    <h1>
+      <span class="red">GTA Online</span><br>
+      <span class="gold">Ucuz & Hızlı Para</span>
+    </h1>
+    <p>Güvenilir, hızlı ve ekonomik GTA Online para satışı. Satın almak için Discord sunucumuza katılın ve ticket açın.</p>
+    <div class="trust-row">
+      <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> Güvenli ödeme</div>
+      <div class="trust-item"><i class="fa-solid fa-bolt"></i> Anlık teslimat</div>
+      <div class="trust-item"><i class="fa-solid fa-headset"></i> 7/24 destek</div>
+      <div class="trust-item"><i class="fa-solid fa-lock"></i> Hesap güvenliği</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Packages -->
+  <div class="packages">
+
+    <!-- 2.5M Package -->
+    <div class="pkg-card">
+      <span class="pkg-icon">💰</span>
+      <div class="pkg-amount">2.500.000 $</div>
+      <div class="pkg-unit">GTA Online Para</div>
+      <div class="pkg-price-row">
+        <span class="pkg-price">10</span>
+        <span class="pkg-currency">TL</span>
+      </div>
+      <ul class="pkg-features">
+        <li><i class="fa-solid fa-check"></i> Anlık karakter hesabınıza</li>
+        <li><i class="fa-solid fa-check"></i> %100 güvenli yöntem</li>
+        <li><i class="fa-solid fa-check"></i> Discord üzerinden ticket</li>
+        <li><i class="fa-solid fa-check"></i> Hesabınız yükseltilmez</li>
+      </ul>
+      <a href="https://discord.gg/DEqp3AKbJX" target="_blank" class="btn-discord">
+        <i class="fa-brands fa-discord"></i> Discord'dan Satın Al
+      </a>
+    </div>
+
+    <!-- 10M Package (Popular) -->
+    <div class="pkg-card popular">
+      <div class="popular-badge">⭐ POPÜLER</div>
+      <span class="pkg-icon">💎</span>
+      <div class="pkg-amount">10.000.000 $</div>
+      <div class="pkg-unit">GTA Online Para · Günlük Limit</div>
+      <div class="pkg-price-row">
+        <span class="pkg-price">40</span>
+        <span class="pkg-currency">TL</span>
+      </div>
+      <ul class="pkg-features">
+        <li><i class="fa-solid fa-check"></i> Anlık karakter hesabınıza</li>
+        <li><i class="fa-solid fa-check"></i> %100 güvenli yöntem</li>
+        <li><i class="fa-solid fa-check"></i> Discord üzerinden ticket</li>
+        <li><i class="fa-solid fa-check"></i> Hesabınız yükseltilmez</li>
+        <li><i class="fa-solid fa-star" style="color:var(--gold)"></i> En çok tercih edilen</li>
+      </ul>
+      <a href="https://discord.gg/DEqp3AKbJX" target="_blank" class="btn-discord">
+        <i class="fa-brands fa-discord"></i> Discord'dan Satın Al
+      </a>
+    </div>
+
+
+    <!-- Para Kasma Hilesi Package -->
+    <div class="pkg-card premium">
+      <div class="premium-badge">🔥 PREMIUM</div>
+      <span class="pkg-icon">⚡</span>
+      <div class="pkg-amount purple">PARA KASMA HİLESİ</div>
+      <div class="pkg-unit">GTA Online · Sonsuz Para Kasma Aracı</div>
+      <div class="pkg-price-row">
+        <span class="pkg-price">250</span>
+        <span class="pkg-currency">TL</span>
+      </div>
+      <ul class="pkg-features">
+        <li><i class="fa-solid fa-infinity" style="color:#cc44ff"></i> Sınırsız para kasma özelliği</li>
+        <li><i class="fa-solid fa-shield-halved" style="color:#cc44ff"></i> Anti-ban korumalı yöntem</li>
+        <li><i class="fa-solid fa-bolt" style="color:#cc44ff"></i> Anında aktivasyon</li>
+        <li><i class="fa-solid fa-headset" style="color:#cc44ff"></i> Kurulum desteği dahil</li>
+        <li><i class="fa-solid fa-arrows-rotate" style="color:#cc44ff"></i> Ömür boyu güncelleme</li>
+        <li><i class="fa-solid fa-crown" style="color:#cc44ff"></i> VIP Discord rolü hediye</li>
+      </ul>
+      <a href="https://discord.gg/DEqp3AKbJX" target="_blank" class="btn-premium">
+        <i class="fa-brands fa-discord"></i> Discord'dan Satın Al
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Daily Limit Banner -->
+  <div class="limit-banner">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <div>
+      <h3>Günlük Satın Alma Limiti</h3>
+      <p>Hesap güvenliğiniz için her kullanıcı günde en fazla <span>10.000.000 $</span> satın alabilir. Bu limit gece yarısı sıfırlanır. 10M paketini <span>günde 1 kez</span>, 2.5M paketini ise <span>günde 4 kez</span> satın alabilirsiniz.</p>
+    </div>
+  </div>
+
+  <!-- How It Works -->
+  <div class="how-section">
+    <h2>Nasıl Satın Alırım? <span>4 Kolay Adım</span></h2>
+    <div class="steps-row">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <i class="fa-brands fa-discord"></i>
+        <h4>Discord'a Katıl</h4>
+        <p>Aşağıdaki butona tıklayarak sunucumuza katılın.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <i class="fa-solid fa-ticket"></i>
+        <h4>Ticket Aç</h4>
+        <p>#ticket kanalından bir destek talebi oluşturun.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <i class="fa-solid fa-money-bill-wave"></i>
+        <h4>Ödeme Yap</h4>
+        <p>Paketi ve ödeme yönteminizi belirtin, ödemeyi yapın.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <i class="fa-solid fa-gamepad"></i>
+        <h4>Al &amp; Oyna</h4>
+        <p>Para anında hesabınıza aktarılır, hemen oynayın!</p>
+      </div>
+    </div>
+    <br><br>
+    <a href="https://discord.gg/DEqp3AKbJX" target="_blank" class="btn-discord" style="max-width:340px;margin:0 auto;font-size:1.05rem;padding:16px;">
+      <i class="fa-brands fa-discord"></i> Discord Sunucusuna Katıl
+    </a>
+  </div>
+
+  <footer>
+    &copy; 2026 <a href="https://www.youtube.com/@H%C4%B0LEPROFES%C3%96R%C3%9C-r9n" target="_blank">Hile Profesörü</a>. Tüm hakları saklıdır.
+    &nbsp;·&nbsp; <a href="/">Ana Sayfa</a>
+  </footer>
+
+</body>
+</html>
