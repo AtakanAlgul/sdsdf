@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doğrulama | Hile Profesörü</title>
+  <meta name="description" content="Dosya kilidi açma ve doğrulama sayfası.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+    :root {
+      --accent: #00ff66;
+      --accent-glow: rgba(0,255,102,0.4);
+      --bg: #0a0c10;
+      --card: rgba(20,26,38,0.7);
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --border: rgba(0,255,102,0.15);
+      --font: 'Outfit', sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(0,255,102,0.06) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(0,255,102,0.03) 0%, transparent 40%);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    /* Particle canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 480px;
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 42px 32px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 60px rgba(0,255,102,0.04);
+      text-align: center;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease;
+    }
+    .container::before {
+      content:'';
+      position:absolute;
+      top:0;left:0;right:0;
+      height:4px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      border-radius:28px 28px 0 0;
+    }
+
+    .logo-icon {
+      font-size: 3rem;
+      color: var(--accent);
+      text-shadow: 0 0 25px var(--accent-glow);
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
+      display: block;
+    }
+    h1 { font-size:1.85rem;font-weight:800;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase; }
+    h1 span { color:var(--accent);text-shadow:0 0 15px var(--accent-glow); }
+    .subtitle { color:var(--muted);font-size:.95rem;line-height:1.55;margin-bottom:28px; }
+
+    .lock-steps { display:flex;flex-direction:column;gap:14px;margin-bottom:28px; }
+    .step-card {
+      background:rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:16px;
+      padding:16px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      text-align:left;
+      transition:all .3s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .step-card.active { border-color:rgba(0,255,102,0.3);background:rgba(0,255,102,0.025); }
+    .step-card.completed { border-color:rgba(0,255,102,0.2); }
+    .step-info { display:flex;align-items:center;gap:14px; }
+    .step-num {
+      background:rgba(255,255,255,0.1);
+      width:34px;height:34px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:.9rem;
+      transition:all .35s ease;
+      flex-shrink:0;
+    }
+    .step-card.completed .step-num {
+      background:var(--accent);color:#000;
+      box-shadow:0 0 16px var(--accent);
+    }
+    .step-text h3 { font-size:.92rem;font-weight:600; }
+    .step-progress-bar {
+      position:absolute;bottom:0;left:0;
+      height:3px;background:var(--accent);
+      width:0%;transition:width .08s linear;
+      box-shadow:0 0 10px var(--accent);
+    }
+
+    .btn {
+      font-family:var(--font);font-weight:700;font-size:.88rem;
+      padding:10px 17px;border-radius:12px;border:none;cursor:pointer;
+      display:inline-flex;align-items:center;gap:8px;
+      transition:all .3s cubic-bezier(.4,0,.2,1);text-decoration:none;
+    }
+    .btn-primary { background:var(--accent);color:#000;box-shadow:0 4px 16px rgba(0,255,102,.2); }
+    .btn-primary:hover:not(:disabled) { background:#1aff73;box-shadow:0 0 28px var(--accent-glow);transform:translateY(-2px); }
+    .btn-secondary { background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.1); }
+    .btn-disabled { background:rgba(255,255,255,.05);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.03);cursor:not-allowed; }
+    .btn-success { background:rgba(0,255,102,.1);color:var(--accent);border:1px solid var(--border);cursor:default; }
+
+    .unlock-area { border-top:1px solid rgba(255,255,255,.08);padding-top:24px; }
+    .btn-unlock { width:100%;justify-content:center;padding:15px;font-size:1rem;border-radius:14px; }
+
+    footer { margin-top:28px;color:rgba(255,255,255,.2);font-size:.8rem;letter-spacing:.5px;text-transform:uppercase; }
+    footer a { color:var(--muted);text-decoration:none;transition:color .3s; }
+    footer a:hover { color:var(--accent); }
+
+    @keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+
+    @media(max-width:480px){
+      .container{padding:28px 18px;width:95%;}
+      h1{font-size:1.5rem;}
+      .step-card{flex-direction:column;align-items:flex-start;gap:14px;}
+      .step-card .btn{width:100%;justify-content:center;}
+    }
+  </style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<div class="container" id="gateway-container" style="display:none;">
+  <i class="logo-icon fa-solid fa-lock" id="lock-icon"></i>
+  <h1><span id="game-name-display" style="color:var(--text); text-shadow:none;"></span> LİNK <span id="title-word">KİLİTLİ</span></h1>
+  <p class="subtitle" id="subtitle-text">İndirme linkine ulaşmak için aşağıdaki YouTube kanallarına abone olmanız gerekmektedir.</p>
+
+  <div class="lock-steps">
+    <div class="step-card" id="step1-card">
+      <div class="step-info">
+        <div class="step-num" id="step1-num">1</div>
+        <div class="step-text"><h3>1. Kanala Abone Ol</h3></div>
+      </div>
+      <button id="btn-sub1" class="btn btn-primary"><i class="fa-brands fa-youtube"></i> Abone Ol</button>
+      <div class="step-progress-bar" id="progress-bar-1"></div>
+    </div>
+    <div class="step-card" id="step2-card">
+      <div class="step-info">
+        <div class="step-num" id="step2-num">2</div>
+        <div class="step-text"><h3>2. Kanala Abone Ol</h3></div>
+      </div>
+      <button id="btn-sub2" class="btn btn-disabled" disabled><i class="fa-brands fa-youtube"></i> Abone Ol</button>
+      <div class="step-progress-bar" id="progress-bar-2"></div>
+    </div>
+  </div>
+
+  <div class="unlock-area">
+    <button id="btn-download" class="btn btn-disabled btn-unlock" disabled>
+      <i class="fa-solid fa-download"></i> Bağlantıyı Al
+    </button>
+  </div>
+</div>
+<footer>&copy; 2026 <a href="https://www.youtube.com/@H%C4%B0LEPROFES%C3%96R%C3%9C-r9n" target="_blank">Hile Profesörü</a>. Tüm hakları saklıdır.</footer>
+
+<script>
+  /* ─── XOR Deşifre ─── */
+  const _K = "HilePro_XOR_Key";
+  function _dec(b64, k) {
+    const s = atob(b64);
+    let r = "";
+    for (let i = 0; i < s.length; i++) r += String.fromCharCode(s.charCodeAt(i) ^ k.charCodeAt(i % k.length));
+    return r;
+  }
+  // Şifreli link - çalışma zamanında çözülür
+  const _ENC = (function(){
+    const raw="https://dosya.co/akv2aw40usvr/Hunt2_Beta_V.1.10.rar.html";
+    let enc="";for(let i=0;i<raw.length;i++)enc+=String.fromCharCode(raw.charCodeAt(i)^_K.charCodeAt(i%_K.length));
+    return btoa(enc);
+  })();
+
+
+
+  /* ─── Web Audio SFX ─── */
+  const AC = new (window.AudioContext || window.webkitAudioContext)();
+  function playBeep(freq, dur, type='sine', vol=0.3) {
+    const g = AC.createGain(), o = AC.createOscillator();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(); o.stop(AC.currentTime + dur);
+  }
+  function sfxClick()   { playBeep(880, 0.12, 'sine', 0.2); }
+  function sfxTick()    { playBeep(440, 0.05, 'square', 0.08); }
+  function sfxDone()    { [523,659,784].forEach((f,i)=>setTimeout(()=>playBeep(f,0.18,'sine',0.25),i*90)); }
+  function sfxUnlock()  { [784,1047,1319,1568].forEach((f,i)=>setTimeout(()=>playBeep(f,0.22,'sine',0.28),i*80)); }
+
+  /* ─── Konfeti Sistemi ─── */
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [], animating = false;
+  const COLORS = ['#00ff66','#00bfff','#ffe600','#ff3e6c','#b400ff','#fff'];
+
+  function spawnConfetti() {
+    canvas.style.display = 'block';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particles = [];
+    for (let i = 0; i < 150; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: Math.random() * 10 + 4,
+        h: Math.random() * 6 + 3,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        rot: Math.random() * Math.PI * 2,
+        rSpeed: (Math.random() - 0.5) * 0.15,
+        speed: Math.random() * 3.5 + 1.5,
+        drift: (Math.random() - 0.5) * 1.5,
+        opacity: 1
+      });
+    }
+    if (!animating) { animating = true; animateConfetti(); }
+  }
+  function animateConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.y += p.speed; p.x += p.drift; p.rot += p.rSpeed;
+      if (p.y > canvas.height * 0.7) p.opacity -= 0.018;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.translate(p.x + p.w/2, p.y + p.h/2);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    particles = particles.filter(p => p.opacity > 0);
+    if (particles.length > 0) {
+      requestAnimationFrame(animateConfetti);
+    } else {
+      animating = false;
+      canvas.style.display = 'none';
+    }
+  }
+
+  /* ─── 3D Kart Tilt ─── */
+  const card = document.getElementById('gateway-container');
+  document.addEventListener('mousemove', e => {
+    if (!card || card.style.display === 'none') return;
+    const r = card.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const rx = ((e.clientY - cy) / r.height) * -12;
+    const ry = ((e.clientX - cx) / r.width) * 12;
+    card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  document.addEventListener('mouseleave', () => {
+    if (card) card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+  });
+
+  /* ─── Ana Sayfa Mantığı ─── */
+  document.addEventListener('DOMContentLoaded', () => {
+    card.style.display = 'block';
+
+    const ch1 = "https://www.youtube.com/@H%C4%B0LEPROFES%C3%96R%C3%9C-r9n";
+    const ch2 = "https://www.youtube.com/channel/UCqQ_-rywWg5ESAjFrKbLiRg";
+
+    const b1 = document.getElementById('btn-sub1');
+    const b2 = document.getElementById('btn-sub2');
+    const bd = document.getElementById('btn-download');
+    const c1 = document.getElementById('step1-card');
+    const c2 = document.getElementById('step2-card');
+    const pb1 = document.getElementById('progress-bar-1');
+    const pb2 = document.getElementById('progress-bar-2');
+    let s1done = false, s2done = false;
+
+    c1.classList.add('active');
+
+    function runStep(btn, card, pb, numId, channelUrl, onDone) {
+      sfxClick();
+      window.open(channelUrl, '_blank');
+      btn.disabled = true;
+      btn.className = 'btn btn-secondary';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bekleyin...';
+      let elapsed = 0;
+      const dur = 5000, step = 50;
+      const t = setInterval(() => {
+        elapsed += step;
+        const pct = Math.min((elapsed / dur) * 100, 100);
+        pb.style.width = pct + '%';
+        if (elapsed % 500 < step) sfxTick();
+        if (elapsed >= dur) {
+          clearInterval(t);
+          sfxDone();
+          card.classList.remove('active');
+          card.classList.add('completed');
+          btn.className = 'btn btn-success';
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Tamamlandı';
+          document.getElementById(numId).innerHTML = '<i class="fa-solid fa-check"></i>';
+          onDone();
+        }
+      }, step);
+    }
+
+    b1.addEventListener('click', () => {
+      runStep(b1, c1, pb1, 'step1-num', ch1, () => {
+        s1done = true;
+        c2.classList.add('active');
+        b2.disabled = false;
+        b2.className = 'btn btn-primary';
+      });
+    });
+
+    b2.addEventListener('click', () => {
+      if (!s1done) return;
+      runStep(b2, c2, pb2, 'step2-num', ch2, () => {
+        s2done = true;
+        sfxUnlock();
+        spawnConfetti();
+        // Konfeti + kilit açılma
+        document.getElementById('lock-icon').className = 'logo-icon fa-solid fa-unlock-keyhole';
+        document.querySelector('h1').innerHTML = 'LİNK <span>AÇILDI</span>';
+        document.getElementById('subtitle-text').innerText = 'Tebrikler! Tüm şartları yerine getirdiniz.';
+        bd.disabled = false;
+        bd.className = 'btn btn-primary btn-unlock';
+        bd.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> İndirmek İçin Tıkla';
+        bd.style.boxShadow = '0 0 35px var(--accent-glow)';
+        bd.style.animation = 'pulse 1.5s infinite';
+        const st = document.createElement('style');
+        st.textContent = '@keyframes pulse{0%,100%{box-shadow:0 0 25px var(--accent-glow);}50%{box-shadow:0 0 50px var(--accent-glow);}}';
+        document.head.appendChild(st);
+      });
+    });
+
+    // --- Statik link haritası ---
+    const GAME_LINKS = {
+      'metin2':      'https://lnk.news/1Vm',
+      'roblox':      'https://lnk.news/Htwxhe',
+      'Metin2maden': 'https://lnk.news/Obpdrt',
+      'gtaonline':   'https://lnk.news/gtaonline'
+    };
+
+    const GAME_NAMES = {
+      'metin2':      'Metin 2 Hile',
+      'roblox':      'Roblox Hile',
+      'Metin2maden': 'Metin 2 Maden Botu',
+      'gtaonline':   'GTA Online'
+    };
+
+    const pUrl = new URLSearchParams(window.location.search);
+    const gameId = pUrl.get('game');
+    let liveDownloadUrl = (gameId && GAME_LINKS[gameId]) ? GAME_LINKS[gameId] : '';
+
+    if (gameId && GAME_NAMES[gameId]) {
+      document.title = GAME_NAMES[gameId] + " | Hile Profesörü";
+      const nameDisplay = document.getElementById('game-name-display');
+      if (nameDisplay) nameDisplay.innerText = GAME_NAMES[gameId] + " - ";
+    }
+
+    bd.addEventListener('click', () => {
+      if (s1done && s2done) {
+        sfxClick();
+        if (liveDownloadUrl) {
+          window.location.href = liveDownloadUrl;
+        } else {
+          window.location.href = _dec(_ENC, _K);
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

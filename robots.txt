@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hileprofesoru-7dbea.web.app/sitemap.xml

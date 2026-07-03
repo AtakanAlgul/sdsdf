@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hile Profesörü | Admin Yönetim Paneli</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #07090e;
+      --bg-surface: #0e121a;
+      --bg-card: rgba(18, 24, 38, 0.7);
+      --bg-input: rgba(255,255,255,0.03);
+      --neon-green: #00ff66;
+      --neon-green-glow: rgba(0, 255, 102, 0.3);
+      --neon-blue: #00bfff;
+      --neon-yellow: #ffb703;
+      --neon-red: #ff5555;
+      --neon-purple: #9d4edd;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font: 'Outfit', sans-serif;
+      --border: rgba(255, 255, 255, 0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg-primary);color:var(--text-main);font-family:var(--font);min-height:100vh;display:flex;}
+
+    /* ─── Login Screen ─── */
+    .login-screen{position:fixed;inset:0;z-index:9999;display:flex;justify-content:center;align-items:center;background:var(--bg-primary);background-image:radial-gradient(circle at 10% 20%,rgba(0,191,255,0.04) 0%,transparent 40%),radial-gradient(circle at 90% 80%,rgba(0,255,102,0.04) 0%,transparent 40%);padding:20px;}
+    .login-card{width:100%;max-width:420px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;padding:40px 32px;box-shadow:0 20px 50px rgba(0,0,0,0.4);text-align:center;}
+    .login-card i.logo{font-size:2.5rem;color:var(--neon-green);text-shadow:0 0 15px var(--neon-green-glow);margin-bottom:16px;display:block;}
+    .login-card h1{font-size:1.5rem;font-weight:800;margin-bottom:6px;}
+    .login-card h1 span{color:var(--neon-green);}
+    .login-card p{color:var(--text-muted);font-size:.88rem;margin-bottom:24px;}
+
+    /* ─── Sidebar ─── */
+    .sidebar{width:260px;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh;position:sticky;top:0;}
+    .sidebar-logo{padding:24px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+    .sidebar-logo i{font-size:1.6rem;color:var(--neon-green);text-shadow:0 0 10px var(--neon-green-glow);}
+    .sidebar-logo span{font-weight:800;font-size:1.1rem;letter-spacing:.5px;}
+    .sidebar-logo span span{color:var(--neon-green);}
+    .sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px;}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;cursor:pointer;color:var(--text-muted);font-weight:600;font-size:.92rem;transition:var(--transition);border:none;background:none;width:100%;text-align:left;font-family:var(--font);}
+    .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text-main);}
+    .nav-item.active{background:rgba(0,255,102,0.08);color:var(--neon-green);border:1px solid rgba(0,255,102,0.12);}
+    .nav-item i{width:20px;text-align:center;font-size:1rem;}
+    .sidebar-footer{padding:16px;border-top:1px solid var(--border);font-size:.75rem;color:rgba(255,255,255,0.2);text-align:center;}
+
+    /* ─── Main Content ─── */
+    .main-content{flex:1;overflow-y:auto;height:100vh;}
+    .topbar{padding:20px 32px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(12px);z-index:10;}
+    .topbar h2{font-size:1.3rem;font-weight:800;display:flex;align-items:center;gap:10px;}
+    .topbar h2 i{color:var(--neon-green);}
+    .page-content{padding:32px;display:flex;flex-direction:column;gap:28px;}
+
+    /* ─── Tab Pages ─── */
+    .tab-page{display:none;}
+    .tab-page.active{display:flex;flex-direction:column;gap:28px;}
+
+    /* ─── Cards ─── */
+    .card{background:var(--bg-card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:20px;padding:28px;box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .card-header h3{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+    .card-header h3 i{color:var(--neon-blue);}
+
+    /* ─── Stats Grid ─── */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
+    .stat-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;transition:var(--transition);}
+    .stat-card:hover{border-color:rgba(0,255,102,0.15);transform:translateY(-2px);}
+    .stat-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+    .stat-icon.green{background:rgba(0,255,102,0.08);color:var(--neon-green);}
+    .stat-icon.blue{background:rgba(0,191,255,0.08);color:var(--neon-blue);}
+    .stat-icon.yellow{background:rgba(255,183,3,0.08);color:var(--neon-yellow);}
+    .stat-icon.purple{background:rgba(157,78,221,0.08);color:var(--neon-purple);}
+    .stat-info{display:flex;flex-direction:column;gap:2px;}
+    .stat-value{font-size:1.6rem;font-weight:800;}
+    .stat-label{font-size:.8rem;color:var(--text-muted);font-weight:600;}
+
+    /* ─── Form Elements ─── */
+    .form-group{display:flex;flex-direction:column;gap:8px;}
+    .form-group label{font-size:.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;}
+    .form-group input,.form-group select,.form-group textarea{background:var(--bg-input);border:1px solid var(--border);color:var(--text-main);padding:13px 16px;border-radius:12px;font-family:var(--font);font-size:.92rem;transition:var(--transition);width:100%;}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--neon-green);background:rgba(255,255,255,0.05);box-shadow:0 0 15px rgba(0,255,102,0.08);}
+    .form-group textarea{resize:vertical;min-height:80px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+    /* ─── Buttons ─── */
+    .btn{font-family:var(--font);font-weight:700;font-size:.9rem;padding:12px 20px;border-radius:12px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:var(--transition);}
+    .btn-primary{background:linear-gradient(135deg,var(--neon-green),#00cc44);color:#000;box-shadow:0 4px 15px rgba(0,255,102,0.15);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,255,102,0.3);}
+    .btn-danger{background:rgba(255,85,85,0.1);color:var(--neon-red);border:1px solid rgba(255,85,85,0.15);}
+    .btn-danger:hover{background:rgba(255,85,85,0.2);}
+    .btn-secondary{background:rgba(255,255,255,0.06);color:var(--text-main);border:1px solid var(--border);}
+    .btn-secondary:hover{background:rgba(255,255,255,0.1);}
+    .btn-sm{padding:8px 14px;font-size:.82rem;border-radius:10px;}
+    .btn-block{width:100%;justify-content:center;padding:15px;font-size:1rem;}
+
+    /* ─── Status Grid ─── */
+    .status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+    .status-row{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+    .status-row .name{font-weight:700;font-size:.92rem;}
+    .status-row .target{font-size:.78rem;color:var(--text-muted);}
+
+    /* ─── Game List ─── */
+    .game-list{display:flex;flex-direction:column;gap:14px;}
+    .game-entry{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:20px;display:flex;justify-content:space-between;align-items:center;transition:var(--transition);}
+    .game-entry:hover{border-color:rgba(0,255,102,0.12);}
+    .game-info{display:flex;flex-direction:column;gap:4px;}
+    .game-info .name{font-weight:700;font-size:1rem;}
+    .game-info .link{font-size:.8rem;color:var(--text-muted);word-break:break-all;max-width:500px;}
+    .game-actions{display:flex;gap:8px;flex-shrink:0;}
+
+    /* ─── Toast Notification ─── */
+    .toast{position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:14px;font-weight:700;font-size:.9rem;display:none;align-items:center;gap:10px;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:slideUp .3s ease;}
+    .toast.success{background:rgba(0,255,102,0.15);border:1px solid rgba(0,255,102,0.25);color:var(--neon-green);}
+    .toast.error{background:rgba(255,85,85,0.15);border:1px solid rgba(255,85,85,0.25);color:var(--neon-red);}
+    @keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+    /* ─── Add Game Modal ─── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;display:none;justify-content:center;align-items:center;backdrop-filter:blur(4px);}
+    .modal-overlay.show{display:flex;}
+    .modal{background:var(--bg-surface);border:1px solid var(--border);border-radius:24px;padding:32px;width:90%;max-width:500px;box-shadow:0 30px 60px rgba(0,0,0,0.5);}
+    .modal h3{font-size:1.2rem;font-weight:800;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+    .modal h3 i{color:var(--neon-green);}
+    .modal-actions{display:flex;gap:12px;margin-top:24px;}
+
+    /* ─── Alert ─── */
+    .alert{padding:10px 16px;border-radius:8px;font-size:.85rem;font-weight:600;display:none;}
+    .alert-error{background:rgba(255,51,51,0.1);border:1px solid rgba(255,51,51,0.2);color:#ff5555;}
+
+    @media(max-width:768px){
+      .sidebar{display:none;}
+      .form-row{grid-template-columns:1fr;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ LOGIN SCREEN ═══ -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <i class="fa-solid fa-lock-open logo"></i>
+      <h1>PROFESÖR <span>YÖNETİM</span></h1>
+      <p>Devam etmek için yönetici bilgilerinizi girin.</p>
+      <div class="alert alert-error" id="login-error">Giriş başarısız!</div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <input type="email" id="admin-email" placeholder="admin@hileprofesoru.com">
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <input type="password" id="admin-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-block" id="btn-login">Giriş Yap <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
+    </div>
+  </div>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar" id="sidebar" style="display:none;">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-gamepad"></i>
+      <span>HİLE <span>PANEL</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+      <button class="nav-item" data-tab="games"><i class="fa-solid fa-gamepad"></i> Oyun Yönetimi</button>
+      <button class="nav-item" data-tab="status"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Durumları</button>
+      <button class="nav-item" data-tab="reviews"><i class="fa-solid fa-comments"></i> Yorum Yönetimi</button>
+      <button class="nav-item" data-tab="users"><i class="fa-solid fa-users"></i> Kullanıcı Yönetimi</button>
+      <button class="nav-item" data-tab="settings"><i class="fa-solid fa-gear"></i> Genel Ayarlar</button>
+    </nav>
+    <div style="padding: 16px;">
+      <button class="btn btn-danger btn-block" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap</button>
+    </div>
+    <div class="sidebar-footer">Hile Profesörü Admin v2.0</div>
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <div class="main-content" id="main-content" style="display:none;">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <h2 id="page-title"><i class="fa-solid fa-chart-pie"></i> Dashboard</h2>
+      <button class="btn btn-secondary btn-sm" onclick="window.open('/','_blank')"><i class="fa-solid fa-external-link-alt"></i> Siteyi Aç</button>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ══ TAB: Dashboard ══ -->
+      <div class="tab-page active" id="tab-dashboard">
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-gamepad"></i></div>
+            <div class="stat-info"><span class="stat-value" id="stat-games">0</span><span class="stat-label">Toplam Oyun</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="stat-info"><span class="stat-value" id="stat-active">0</span><span class="stat-label">Aktif Bypass</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon yellow"><i class="fa-solid fa-wrench"></i></div>
+            <div class="stat-info"><span class="stat-value" id="stat-maintenance">0</span><span class="stat-label">Bakımda</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-info"><span class="stat-value" id="stat-updated" style="font-size:1rem;">—</span><span class="stat-label">Son Güncelleme</span></div>
+          </div>
+          <div class="stat-card" style="grid-column: 1 / -1; background: rgba(0, 191, 255, 0.05); border-color: rgba(0, 191, 255, 0.2);">
+            <div class="stat-icon" style="background: rgba(0, 191, 255, 0.1); color: var(--neon-blue);"><i class="fa-solid fa-eye"></i></div>
+            <div class="stat-info"><span class="stat-value" id="stat-pageviews">0</span><span class="stat-label">Toplam Ziyaret (Sayfa Görüntüleme)</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="fa-solid fa-list"></i> Kayıtlı Oyunlar</h3></div>
+          <div class="game-list" id="dashboard-games"></div>
+        </div>
+      </div>
+
+      <!-- ══ TAB: Oyun Yönetimi ══ -->
+      <div class="tab-page" id="tab-games">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-gamepad"></i> Oyun Listesi</h3>
+          </div>
+          <div class="game-list" id="games-list"></div>
+        </div>
+      </div>
+
+      <!-- ══ TAB: Anti-Cheat Durumları ══ -->
+      <div class="tab-page" id="tab-status">
+        <div class="card">
+          <div class="card-header"><h3><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Bypass Durumları</h3></div>
+          <div class="status-grid" id="status-grid-admin"></div>
+        </div>
+        <button class="btn btn-primary btn-block" id="btn-save-status"><i class="fa-solid fa-cloud-arrow-up"></i> Durum Değişikliklerini Kaydet</button>
+      </div>
+
+      <!-- ══ TAB: Yorum Yönetimi ══ -->
+      <div class="tab-page" id="tab-reviews">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-comments"></i> Yorum Listesi</h3>
+            <button class="btn btn-primary btn-sm" id="btn-add-review"><i class="fa-solid fa-plus"></i> Yeni Yorum Ekle</button>
+          </div>
+          <div class="game-list" id="reviews-list"></div>
+        </div>
+      </div>
+
+      <!-- ══ TAB: Kullanıcı Yönetimi ══ -->
+      <div class="tab-page" id="tab-users">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-users"></i> Kullanıcı Listesi</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadUsers()"><i class="fa-solid fa-rotate"></i> Yenile</button>
+          </div>
+          <div class="game-list" id="users-list"></div>
+        </div>
+      </div>
+
+      <!-- ══ TAB: Genel Ayarlar ══ -->
+      <div class="tab-page" id="tab-settings">
+        <div class="card">
+          <div class="card-header"><h3><i class="fa-solid fa-gear"></i> Site Ayarları</h3></div>
+          <div class="form-group"><label>Site Versiyon Numarası</label><input type="text" id="set-version" placeholder="v2.6.1"></div>
+          <div class="form-group" style="margin-top:16px;"><label>Duyuru Metni (Hero altında görünür, boş bırakılırsa gizlenir)</label><textarea id="set-announcement" placeholder="Ör: Metin2 hilesi güncellendi!"></textarea></div>
+        </div>
+        <button class="btn btn-primary btn-block" id="btn-save-settings"><i class="fa-solid fa-cloud-arrow-up"></i> Ayarları Kaydet</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ ADD/EDIT GAME MODAL ═══ -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h3 id="modal-title"><i class="fa-solid fa-plus-circle"></i> Yeni Oyun Ekle</h3>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="form-group"><label>Oyun Adı</label><input type="text" id="game-name" placeholder="Ör: Valorant Hile"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Kısa Kod (URL)</label><input type="text" id="game-slug" placeholder="Ör: valoranthile"></div>
+          <div class="form-group"><label>İkon (Font Awesome)</label><input type="text" id="game-icon" placeholder="Ör: fa-solid fa-crosshairs"></div>
+        </div>
+        <div class="form-group"><label>İndirme Linki (URL)</label><input type="url" id="game-link" placeholder="https://dosya.co/..."></div>
+        <div class="form-group"><label>Açıklama</label><textarea id="game-desc" placeholder="Oyun hakkında kısa bilgi..."></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Renk Kodu</label><input type="text" id="game-color" placeholder="Ör: #ff3333"></div>
+          <div class="form-group">
+            <label>Durum</label>
+            <select id="game-status">
+              <option value="Aktif">Aktif</option>
+              <option value="Bakımda">Bakımda</option>
+              <option value="Yakında">Yakında</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Özellikler (her satıra bir tane)</label><textarea id="game-features" placeholder="Speed Hack&#10;Aimbot&#10;ESP"></textarea></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-modal-save"><i class="fa-solid fa-check"></i> Kaydet</button>
+        <button class="btn btn-secondary" id="btn-modal-close"><i class="fa-solid fa-times"></i> İptal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ADD/EDIT REVIEW MODAL ═══ -->
+  <div class="modal-overlay" id="modal-review-overlay">
+    <div class="modal">
+      <h3 id="modal-review-title"><i class="fa-solid fa-plus-circle"></i> Yeni Yorum Ekle</h3>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="form-row">
+          <div class="form-group"><label>İsim</label><input type="text" id="review-name" placeholder="Ör: Ahmet K."></div>
+          <div class="form-group"><label>Etiket</label><input type="text" id="review-tag" placeholder="Ör: Metin2 Oyuncusu"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Yıldız</label>
+            <select id="review-stars">
+              <option value="5">5 Yıldız</option>
+              <option value="4">4 Yıldız</option>
+              <option value="3">3 Yıldız</option>
+              <option value="2">2 Yıldız</option>
+              <option value="1">1 Yıldız</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Durum</label>
+            <select id="review-status">
+              <option value="Aktif">Aktif</option>
+              <option value="Gizli">Gizli</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Yorum Metni</label><textarea id="review-text" placeholder="Kullanıcı yorumu..."></textarea></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-modal-review-save"><i class="fa-solid fa-check"></i> Kaydet</button>
+        <button class="btn btn-secondary" id="btn-modal-review-close"><i class="fa-solid fa-times"></i> İptal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Cloudflare D1 API ──
+    const API = '/api';
+    const ADMIN_TOKEN = 'hileprof_admin_2026';
+    
+    function apiCall(endpoint, method = 'GET', body = null) {
+      const opts = {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Token': ADMIN_TOKEN
+        }
+      };
+      if (body) opts.body = JSON.stringify(body);
+      return fetch(API + '/' + endpoint, opts).then(r => r.json());
+    }
+
+
+    // ─── DOM ───
+    const $ = id => document.getElementById(id);
+    let editingGameKey = null;
+    let editingReviewKey = null;
+
+    // ─── Auth State Listener ───
+    if (localStorage.getItem('admin_logged_in') === 'true') {
+      $('login-screen').style.display = 'none';
+      $('sidebar').style.display = 'flex';
+      $('main-content').style.display = 'block';
+      loadAll();
+    } else {
+      $('login-screen').style.display = 'flex';
+      $('sidebar').style.display = 'none';
+      $('main-content').style.display = 'none';
+    }
+
+    // ─── Login ───
+    $('btn-login').onclick = doLogin;
+    $('admin-pass').addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
+    $('admin-email').addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
+    
+    function doLogin() {
+      const email = $('admin-email').value;
+      const pass = $('admin-pass').value;
+      if (!email || !pass) {
+        $('login-error').innerText = 'E-posta ve şifre giriniz!';
+        $('login-error').style.display = 'block';
+        return;
+      }
+      if (email === 'admin@hileprofesoru.com' && pass === '123456') {
+        localStorage.setItem('admin_logged_in', 'true');
+        $('login-screen').style.display = 'none';
+        $('sidebar').style.display = 'flex';
+        $('main-content').style.display = 'block';
+        loadAll();
+      } else {
+        $('login-error').innerText = 'Hatalı e-posta veya şifre!';
+        $('login-error').style.display = 'block';
+        $('admin-pass').value = '';
+      }
+    }
+
+    function doLogout() {
+      localStorage.removeItem('admin_logged_in');
+      location.reload();
+    }
+
+    // ─── Sidebar Navigation ───
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+        $('tab-' + tab).classList.add('active');
+        const titles = {
+          dashboard: '<i class="fa-solid fa-chart-pie"></i> Dashboard',
+          games: '<i class="fa-solid fa-gamepad"></i> Oyun Yönetimi',
+          status: '<i class="fa-solid fa-shield-halved"></i> Anti-Cheat Durumları',
+          reviews: '<i class="fa-solid fa-comments"></i> Yorum Yönetimi',
+          users: '<i class="fa-solid fa-users"></i> Kullanıcı Yönetimi',
+          settings: '<i class="fa-solid fa-gear"></i> Genel Ayarlar'
+        };
+        $('page-title').innerHTML = titles[tab] || '';
+      });
+    });
+
+    // ─── Toast ───
+    function showToast(msg, type='success') {
+      const t = $('toast');
+      t.className = 'toast ' + type;
+      t.innerHTML = `<i class="fa-solid fa-${type==='success'?'circle-check':'triangle-exclamation'}"></i> ${msg}`;
+      t.style.display = 'flex';
+      setTimeout(() => t.style.display = 'none', 3500);
+    }
+
+    // ─── Load All Data ───
+    function loadAll() {
+      loadGames();
+      loadStatus();
+      loadSettings();
+      loadReviews();
+      loadPageviews();
+      loadUsers();
+    }
+    
+    function loadPageviews() {
+      apiCall('stats').then(data => {
+        $('stat-pageviews').textContent = (data.pageviews || 0).toLocaleString('tr-TR');
+      });
+    }
+
+    // ═══════════════════════════════════
+    //           GAMES MANAGEMENT
+    // ═══════════════════════════════════
+    function loadGames() {
+      apiCall('games').then(games => {
+        renderGames(games);
+        renderDashboardGames(games);
+        updateStats(games);
+      });
+    }
+
+    function renderGames(games) {
+      const list = $('games-list');
+      list.innerHTML = '';
+      const keys = Object.keys(games);
+      if (keys.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Henüz oyun eklenmedi.</p>';
+        return;
+      }
+      keys.forEach(key => {
+        const g = games[key];
+        const statusColor = g.status === 'Aktif' ? 'var(--neon-green)' : g.status === 'Bakımda' ? 'var(--neon-yellow)' : 'var(--text-muted)';
+        list.innerHTML += `
+          <div class="game-entry">
+            <div class="game-info">
+              <span class="name"><i class="${g.icon || 'fa-solid fa-gamepad'}" style="color:${g.color||'var(--neon-green)'};margin-right:8px;"></i>${g.name}</span>
+              <span class="link">${g.link || '—'}</span>
+              <div style="display:flex; gap:12px; margin-top:4px;">
+                <span style="font-size:.78rem;color:${statusColor};font-weight:700;">${g.status || 'Aktif'}</span>
+                <span style="font-size:.78rem;color:var(--text-muted);"><i class="fa-solid fa-download"></i> ${g.downloads || 0} İndirme</span>
+              </div>
+            </div>
+            <div class="game-actions">
+              <button class="btn btn-secondary btn-sm" onclick="editGame('${key}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="deleteGame('${key}','${g.name}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>`;
+      });
+    }
+
+    function renderDashboardGames(games) {
+      const list = $('dashboard-games');
+      list.innerHTML = '';
+      const keys = Object.keys(games);
+      if (keys.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Henüz oyun eklenmedi.</p>';
+        return;
+      }
+      keys.forEach(key => {
+        const g = games[key];
+        const statusColor = g.status === 'Aktif' ? 'var(--neon-green)' : g.status === 'Bakımda' ? 'var(--neon-yellow)' : 'var(--text-muted)';
+        list.innerHTML += `
+          <div class="game-entry">
+            <div class="game-info">
+              <span class="name"><i class="${g.icon || 'fa-solid fa-gamepad'}" style="color:${g.color||'var(--neon-green)'};margin-right:8px;"></i>${g.name}</span>
+              <span class="link">/${g.slug || ''}</span>
+            </div>
+            <span style="font-size:.82rem;color:${statusColor};font-weight:700;">${g.status || 'Aktif'}</span>
+          </div>`;
+      });
+    }
+
+    function updateStats(games) {
+      const keys = Object.keys(games);
+      $('stat-games').textContent = keys.length;
+      let active = 0, maint = 0;
+      keys.forEach(k => {
+        if (games[k].status === 'Aktif') active++;
+        else if (games[k].status === 'Bakımda') maint++;
+      });
+      $('stat-active').textContent = active;
+      $('stat-maintenance').textContent = maint;
+    }
+
+    // Add/Edit Modal
+    $('btn-modal-close').onclick = () => closeModal();
+    $('modal-overlay').onclick = e => { if(e.target === $('modal-overlay')) closeModal(); };
+
+    function openModal(key=null) {
+      editingGameKey = key;
+      if (key) {
+        $('modal-title').innerHTML = '<i class="fa-solid fa-pen"></i> Oyunu Düzenle';
+        apiCall('games').then(games => {
+          const g = games[key];
+          if (g) {
+            $('game-name').value = g.name || '';
+            $('game-slug').value = g.slug || '';
+            $('game-icon').value = g.icon || '';
+            $('game-link').value = g.link || '';
+            $('game-desc').value = g.description || '';
+            $('game-color').value = g.color || '';
+            $('game-status').value = g.status || 'Aktif';
+            $('game-features').value = (g.features || []).join('\n');
+          }
+        });
+        $('modal-overlay').classList.add('show');
+      } else {
+        $('modal-title').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Yeni Oyun Ekle';
+        ['game-name','game-slug','game-icon','game-link','game-desc','game-color','game-features'].forEach(id => $(id).value = '');
+        $('game-status').value = 'Aktif';
+        $('modal-overlay').classList.add('show');
+      }
+    }
+
+    function closeModal() {
+      $('modal-overlay').classList.remove('show');
+      editingGameKey = null;
+    }
+
+    $('btn-modal-save').onclick = () => {
+      const name = $('game-name').value.trim();
+      const slug = $('game-slug').value.trim();
+      const link = $('game-link').value.trim();
+      if (!name || !slug) { showToast('Oyun adı ve kısa kod zorunlu!', 'error'); return; }
+
+      const data = {
+        name,
+        slug,
+        icon: $('game-icon').value.trim() || 'fa-solid fa-gamepad',
+        link,
+        description: $('game-desc').value.trim(),
+        color: $('game-color').value.trim() || '#00ff66',
+        status: $('game-status').value,
+        features: $('game-features').value.trim().split('\n').filter(f => f.trim()),
+        updatedAt: new Date().toISOString()
+      };
+
+      const method = editingGameKey ? 'PUT' : 'POST';
+      const endpoint = editingGameKey ? 'games/' + editingGameKey : 'games';
+      apiCall(endpoint, method, data).then(res => {
+        if (res.success) {
+          showToast(editingGameKey ? 'Oyun güncellendi!' : 'Yeni oyun eklendi!');
+          closeModal();
+          loadGames();
+          loadSettings();
+        } else {
+          showToast('Hata: ' + (res.error || 'Bilinmeyen hata'), 'error');
+        }
+      }).catch(e => showToast('Hata: ' + e.message, 'error'));
+    };
+
+    function editGame(key) { openModal(key); }
+
+    function deleteGame(key, name) {
+      if (confirm(`"${name}" oyununu silmek istediğinize emin misiniz?`)) {
+        apiCall('games/' + key, 'DELETE').then(res => {
+          if (res.success) {
+            showToast(`"${name}" silindi.`);
+            loadGames();
+          } else {
+            showToast('Hata: ' + (res.error || 'Bilinmeyen'), 'error');
+          }
+        }).catch(e => showToast('Hata: ' + e.message, 'error'));
+      }
+    }
+
+    // ═══════════════════════════════════
+    //         STATUS MANAGEMENT
+    // ═══════════════════════════════════
+    function loadStatus() {
+      apiCall('status').then(status => {
+        renderStatusAdmin(status);
+      });
+    }
+
+    function renderStatusAdmin(status) {
+      const grid = $('status-grid-admin');
+      const items = [
+        { key: 'battleye', label: 'BattlEye Bypass', target: 'Metin2 / R6S' },
+        { key: 'eac', label: 'Easy Anti-Cheat', target: 'Apex / Rust' },
+        { key: 'vanguard', label: 'Riot Vanguard', target: 'Valorant' },
+        { key: 'rockstar', label: 'Rockstar AC', target: 'GTA Online' }
+      ];
+      grid.innerHTML = '';
+      items.forEach(item => {
+        grid.innerHTML += `
+          <div class="status-row">
+            <div>
+              <div class="name">${item.label}</div>
+              <div class="target">${item.target}</div>
+            </div>
+            <select id="admin-status-${item.key}" style="background:var(--bg-input);border:1px solid var(--border);color:var(--text-main);padding:8px 12px;border-radius:10px;font-family:var(--font);font-size:.85rem;">
+              <option value="Aktif" ${(status[item.key]||'Aktif')==='Aktif'?'selected':''}>✅ Aktif</option>
+              <option value="Bakımda" ${status[item.key]==='Bakımda'?'selected':''}>🟡 Bakımda</option>
+              <option value="Tespit Edildi" ${status[item.key]==='Tespit Edildi'?'selected':''}>🔴 Tespit Edildi</option>
+            </select>
+          </div>`;
+      });
+    }
+
+    $('btn-save-status').onclick = () => {
+      const data = {
+        battleye: $('admin-status-battleye').value,
+        eac: $('admin-status-eac').value,
+        vanguard: $('admin-status-vanguard').value,
+        rockstar: $('admin-status-rockstar').value
+      };
+      apiCall('status', 'PUT', data).then(res => {
+        if (res.success) {
+          showToast('Anti-cheat durumları güncellendi!');
+        } else {
+          showToast('Hata: ' + (res.error || 'Bilinmeyen'), 'error');
+        }
+      }).catch(e => showToast('Hata: ' + e.message, 'error'));
+    };
+
+    // ═══════════════════════════════════
+    //         REVIEWS MANAGEMENT
+    // ═══════════════════════════════════
+    function loadReviews() {
+      apiCall('reviews').then(reviews => {
+        renderReviews(reviews);
+      });
+    }
+
+    function renderReviews(reviews) {
+      const list = $('reviews-list');
+      list.innerHTML = '';
+      const keys = Object.keys(reviews);
+      if (keys.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Henüz yorum eklenmedi.</p>';
+        return;
+      }
+      keys.forEach(key => {
+        const r = reviews[key];
+        const statusColor = r.status === 'Aktif' ? 'var(--neon-green)' : 'var(--text-muted)';
+        list.innerHTML += `
+          <div class="game-entry">
+            <div class="game-info">
+              <span class="name">${r.name} <span style="font-size:.8rem;color:var(--neon-yellow);margin-left:8px;">${'<i class="fa-solid fa-star"></i>'.repeat(r.stars || 5)}</span></span>
+              <span class="link">"${r.text}"</span>
+              <div style="display:flex; gap:12px; margin-top:4px;">
+                <span style="font-size:.78rem;color:${statusColor};font-weight:700;">${r.status || 'Aktif'}</span>
+                <span style="font-size:.78rem;color:var(--neon-blue);">${r.tag || ''}</span>
+              </div>
+            </div>
+            <div class="game-actions">
+              <button class="btn btn-secondary btn-sm" onclick="editReview('${key}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="deleteReview('${key}','${r.name}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>`;
+      });
+    }
+
+    $('btn-add-review').onclick = () => openReviewModal();
+    $('btn-modal-review-close').onclick = () => closeReviewModal();
+    $('modal-review-overlay').onclick = e => { if(e.target === $('modal-review-overlay')) closeReviewModal(); };
+
+    function openReviewModal(key=null) {
+      editingReviewKey = key;
+      if (key) {
+        $('modal-review-title').innerHTML = '<i class="fa-solid fa-pen"></i> Yorumu Düzenle';
+        apiCall('reviews').then(reviews => {
+          const r = reviews[key];
+          if (r) {
+            $('review-name').value = r.name || '';
+            $('review-tag').value = r.tag || '';
+            $('review-text').value = r.text || '';
+            $('review-stars').value = r.stars || '5';
+            $('review-status').value = r.status || 'Aktif';
+          }
+        });
+      } else {
+        $('modal-review-title').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Yeni Yorum Ekle';
+        ['review-name','review-tag','review-text'].forEach(id => $(id).value = '');
+        $('review-stars').value = '5';
+        $('review-status').value = 'Aktif';
+      }
+      $('modal-review-overlay').classList.add('show');
+    }
+
+    function closeReviewModal() {
+      $('modal-review-overlay').classList.remove('show');
+      editingReviewKey = null;
+    }
+
+    $('btn-modal-review-save').onclick = () => {
+      const name = $('review-name').value.trim();
+      const text = $('review-text').value.trim();
+      if (!name || !text) { showToast('İsim ve yorum metni zorunlu!', 'error'); return; }
+
+      const data = {
+        name,
+        tag: $('review-tag').value.trim(),
+        text,
+        stars: parseInt($('review-stars').value),
+        status: $('review-status').value
+      };
+
+      const method = editingReviewKey ? 'PUT' : 'POST';
+      const endpoint = editingReviewKey ? 'reviews/' + editingReviewKey : 'reviews';
+      apiCall(endpoint, method, data).then(res => {
+        if (res.success) {
+          showToast(editingReviewKey ? 'Yorum güncellendi!' : 'Yeni yorum eklendi!');
+          closeReviewModal();
+          loadReviews();
+        } else {
+          showToast('Hata: ' + (res.error || 'Bilinmeyen'), 'error');
+        }
+      }).catch(e => showToast('Hata: ' + e.message, 'error'));
+    };
+
+    function editReview(key) { openReviewModal(key); }
+
+    function deleteReview(key, name) {
+      if (confirm(`"${name}" adlı kişinin yorumunu silmek istediğinize emin misiniz?`)) {
+        apiCall('reviews/' + key, 'DELETE').then(res => {
+          if (res.success) {
+            showToast('Yorum silindi.');
+            loadReviews();
+          } else {
+            showToast('Hata: ' + (res.error || 'Bilinmeyen'), 'error');
+          }
+        }).catch(e => showToast('Hata: ' + e.message, 'error'));
+      }
+    }
+
+    // ═══════════════════════════════════
+    //         USERS MANAGEMENT
+    // ═══════════════════════════════════
+    function loadUsers() {
+      apiCall('admin/users').then(users => {
+        const list = $('users-list');
+        list.innerHTML = '';
+        if (!users || users.length === 0) {
+          list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Henüz kullanıcı yok.</p>';
+          return;
+        }
+        users.forEach(u => {
+          list.innerHTML += `
+            <div class="game-entry">
+              <div class="game-info">
+                <span class="name"><i class="fa-solid fa-user" style="color:var(--neon-blue);margin-right:8px;"></i>${u.username}</span>
+                <span class="link">${u.email}</span>
+                <div style="display:flex; gap:12px; margin-top:4px;">
+                  <span style="font-size:.78rem;color:var(--neon-green);font-weight:700;">${(u.balance || 0).toLocaleString('tr-TR')} ₺ Bakiye</span>
+                  <span style="font-size:.78rem;color:var(--text-muted);"><i class="fa-solid fa-clock"></i> ${new Date(u.created_at).toLocaleDateString('tr-TR')}</span>
+                </div>
+              </div>
+              <div class="game-actions">
+                <button class="btn btn-secondary btn-sm" onclick="promptAddBalance('${u.id}', '${u.username}')"><i class="fa-solid fa-wallet"></i> Bakiye Ekle/Çıkar</button>
+              </div>
+            </div>`;
+        });
+      });
+    }
+
+    function promptAddBalance(userId, username) {
+      const amountStr = prompt(`"${username}" adlı kullanıcıya eklenecek/çıkarılacak miktarı girin (Ör: 50 veya -20):`);
+      if (amountStr === null) return;
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount)) {
+        showToast('Geçersiz miktar!', 'error');
+        return;
+      }
+      
+      apiCall('admin/users/' + userId + '/balance', 'PUT', { amount }).then(res => {
+        if (res.success) {
+          showToast('Bakiye başarıyla güncellendi.');
+          loadUsers();
+        } else {
+          showToast('Hata: ' + (res.error || 'Bilinmeyen hata'), 'error');
+        }
+      }).catch(e => showToast('Hata: ' + e.message, 'error'));
+    }
+
+    // ═══════════════════════════════════
+    //         SETTINGS MANAGEMENT
+    // ═══════════════════════════════════
+    function loadSettings() {
+      apiCall('settings').then(s => {
+        $('set-version').value = s.version || '';
+        $('set-announcement').value = s.announcement || '';
+        const lu = s.lastUpdated;
+        if (lu) {
+          const d = new Date(lu);
+          $('stat-updated').textContent = d.toLocaleString('tr-TR', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short' });
+        }
+      });
+    }
+
+    $('btn-save-settings').onclick = () => {
+      const data = {
+        version: $('set-version').value.trim(),
+        announcement: $('set-announcement').value.trim()
+      };
+      apiCall('settings', 'PUT', data).then(res => {
+        if (res.success) {
+          showToast('Site ayarları güncellendi!');
+          loadSettings();
+        } else {
+          showToast('Hata: ' + (res.error || 'Bilinmeyen'), 'error');
+        }
+      }).catch(e => showToast('Hata: ' + e.message, 'error'));
+    };
+  </script>
+</body>
+</html>

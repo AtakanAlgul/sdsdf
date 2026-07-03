@@ -1,0 +1,23 @@
+{
+  "name": "Hile Profesörü",
+  "short_name": "HilePro",
+  "description": "Hile Profesörü resmi indirme kapısı. En güncel oyun hileleri ve modları için doğru adrestesiniz.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0c10",
+  "theme_color": "#00ff66",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "180x180",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    }
+  ]
+}

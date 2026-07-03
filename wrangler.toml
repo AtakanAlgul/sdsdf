@@ -1,0 +1,8 @@
+name = "hileprofesoru"
+pages_build_output_dir = "."
+compatibility_date = "2024-03-20"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hileprofesoru-db"
+database_id = "02f6e669-e054-4775-9b27-51f7808269e2"
