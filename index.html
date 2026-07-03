@@ -11,14 +11,14 @@
   <meta name="publisher" content="Hile Profesörü">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicon.ico">
-  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="favicon.ico">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="favicon.ico">
 
   <!-- Canonical -->
   <link rel="canonical" href="https://hileprofesoru-7dbea.web.app/">
 
   <!-- Web App Manifest -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
 
   <!-- Preconnect / Resource Hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1144,7 +1144,7 @@
   <!-- Premium Header / Navbar -->
   <header>
     <div class="nav-container">
-      <a href="/" class="logo-container">
+      <a href="index.html" class="logo-container">
         <i class="fa-solid fa-gamepad"></i>
         <span>HİLE <span>PROFESÖRÜ</span></span>
       </a>
@@ -1523,7 +1523,7 @@
           <li><i class="fa-solid fa-circle-check"></i> Gelişmiş Engel Tanıma ve Kusursuz Rota Çizimi</li>
           <li><i class="fa-solid fa-circle-check"></i> Kazma Süresi Optimizasyonu (Maksimum Verim)</li>
         </ul>
-        <a href="/Metin2maden" class="btn-card" onclick="handleNav(event, '/Metin2maden', '-OwUvVNVvfc7hAaMbIZt')">
+        <a href="dogrula.html?game=Metin2maden" class="btn-card" onclick="handleNav(event, 'dogrula.html', '-OwUvVNVvfc7hAaMbIZt')">
           İndir <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
@@ -1537,7 +1537,7 @@
           <li><i class="fa-solid fa-circle-check"></i> ESP</li>
           <li><i class="fa-solid fa-circle-check"></i> Fly Hack</li>
         </ul>
-        <a href="/robloxhile" class="btn-card" onclick="handleNav(event, '/robloxhile', 'roblox')">
+        <a href="dogrula.html?game=roblox" class="btn-card" onclick="handleNav(event, 'dogrula.html', 'roblox')">
           İndir <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
@@ -1551,7 +1551,7 @@
           <li><i class="fa-solid fa-circle-check"></i> RP Hack</li>
           <li><i class="fa-solid fa-circle-check"></i> God Mode</li>
         </ul>
-        <a href="/gtaonline" class="btn-card" onclick="handleNav(event, '/gtaonline', 'gtaonline')">
+        <a href="gtaonline.html" class="btn-card" onclick="handleNav(event, 'gtaonline.html', 'gtaonline')">
           Hizmeti İncele <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
@@ -1565,7 +1565,7 @@
           <li><i class="fa-solid fa-circle-check"></i> Gelişmiş Engel Tanıma ve Kusursuz Rota Çizimi</li>
           <li><i class="fa-solid fa-circle-check"></i> Kazma Süresi Optimizasyonu (Maksimum Verim)</li>
         </ul>
-        <a href="/Metin2maden" class="btn-card" onclick="handleNav(event, '/Metin2maden', 'Metin2maden')">
+        <a href="dogrula.html?game=Metin2maden" class="btn-card" onclick="handleNav(event, 'dogrula.html', 'Metin2maden')">
           İndir <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
@@ -1611,8 +1611,8 @@
     
     function handleNav(e, path, key) {
       e.preventDefault();
-      const isBuiltin = ['/gtaonline'].includes(path);
-      const targetPath = isBuiltin ? '/gtaonline.html' : '/dogrula.html';
+      const isBuiltin = ['gtaonline.html', '/gtaonline', '/gtaonline.html'].includes(path);
+      const targetPath = isBuiltin ? 'gtaonline.html' : 'dogrula.html';
       const q = isBuiltin ? '' : (key ? `?game=${key}` : '');
 
       if (key && !isBuiltin) {
@@ -1830,3 +1830,4 @@
   </script>
 </body>
 </html>
+
